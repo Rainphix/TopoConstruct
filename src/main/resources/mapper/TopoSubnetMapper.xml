@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topology.phytopo.mapper.TopoSubnetMapper">
+
+    <resultMap id="BaseResultMap" type="com.topology.phytopo.entity.TopoSubnet">
+        <id column="ID" property="id"/>
+        <result column="DN" property="dn"/>
+        <result column="NAME" property="name"/>
+        <result column="DISPLAY_NAME" property="displayName"/>
+        <result column="PARENT_DN" property="parentDn"/>
+        <result column="PARENT_TYPE" property="parentType"/>
+        <result column="LAYER" property="layer"/>
+        <result column="IS_MERGE_GROUP" property="isMergeGroup"/>
+        <result column="MERGE_TYPE" property="mergeType"/>
+        <result column="MED_NODE" property="medNode"/>
+        <result column="ADDRESS" property="address"/>
+        <result column="LOCATION" property="location"/>
+        <result column="MAINTAINER" property="maintainer"/>
+        <result column="CONTACT" property="contact"/>
+        <result column="ALARM_STATUS" property="alarmStatus"/>
+        <result column="CREATED_TIME" property="createdTime"/>
+        <result column="UPDATED_TIME" property="updatedTime"/>
+        <result column="SYNC_TIME" property="syncTime"/>
+        <result column="VERSION" property="version"/>
+    </resultMap>
+
+    <select id="selectByDn" resultType="com.topology.phytopo.entity.TopoSubnet">
+        SELECT * FROM T_TOPO_SUBNET WHERE DN = #{dn}
+    </select>
+
+    <select id="selectByParentDn" resultType="com.topology.phytopo.entity.TopoSubnet">
+        SELECT * FROM T_TOPO_SUBNET
+        <where>
+            <choose>
+                <when test="parentDn == null">PARENT_DN IS NULL</when>
+                <otherwise>PARENT_DN = #{parentDn}</otherwise>
+            </choose>
+        </where>
+        ORDER BY NAME
+    </select>
+
+    <select id="selectAll" resultType="com.topology.phytopo.entity.TopoSubnet">
+        SELECT * FROM T_TOPO_SUBNET ORDER BY LAYER, NAME
+    </select>
+
+    <insert id="insert" parameterType="com.topology.phytopo.entity.TopoSubnet">
+        INSERT INTO T_TOPO_SUBNET (
+            DN, NAME, DISPLAY_NAME, PARENT_DN, PARENT_TYPE, LAYER,
+            IS_MERGE_GROUP, MERGE_TYPE, MED_NODE, ADDRESS, LOCATION,
+            MAINTAINER, CONTACT, ALARM_STATUS, CREATED_TIME, UPDATED_TIME, SYNC_TIME, VERSION
+        ) VALUES (
+            #{dn}, #{name}, #{displayName}, #{parentDn}, #{parentType}, #{layer},
+            #{isMergeGroup}, #{mergeType}, #{medNode}, #{address}, #{location},
+            #{maintainer}, #{contact}, #{alarmStatus}, #{createdTime}, #{updatedTime}, #{syncTime}, #{version}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.topology.phytopo.entity.TopoSubnet">
+        UPDATE T_TOPO_SUBNET SET
+            NAME = #{name},
+            DISPLAY_NAME = #{displayName},
+            ADDRESS = #{address},
+            LOCATION = #{location},
+            MAINTAINER = #{maintainer},
+            CONTACT = #{contact},
+            UPDATED_TIME = #{updatedTime}
+        WHERE DN = #{dn}
+    </update>
+
+    <delete id="deleteByDn">
+        DELETE FROM T_TOPO_SUBNET WHERE DN = #{dn}
+    </delete>
+
+    <select id="existsByDn" resultType="boolean">
+        SELECT COUNT(1) > 0 FROM T_TOPO_SUBNET WHERE DN = #{dn}
+    </select>
+
+    <select id="countNeByParentDn" resultType="int">
+        SELECT COUNT(*) FROM T_TOPO_NE WHERE PARENT_DN = #{parentDn}
+    </select>
+
+    <select id="countSubnetByParentDn" resultType="int">
+        SELECT COUNT(*) FROM T_TOPO_SUBNET WHERE PARENT_DN = #{parentDn}
+    </select>
+
+    <select id="selectMergeGroups" resultType="com.topology.phytopo.entity.TopoSubnet">
+        SELECT * FROM T_TOPO_SUBNET WHERE IS_MERGE_GROUP = true
+    </select>
+
+    <select id="selectMergeGroupsByParent" resultType="com.topology.phytopo.entity.TopoSubnet">
+        SELECT * FROM T_TOPO_SUBNET WHERE PARENT_DN = #{parentDn} AND IS_MERGE_GROUP = true
+    </select>
+
+    <update id="updateParentDn">
+        UPDATE T_TOPO_SUBNET SET PARENT_DN = #{parentDn}, LAYER = #{layer}, UPDATED_TIME = #{updatedTime}
+        WHERE DN = #{dn}
+    </update>
+
+</mapper>

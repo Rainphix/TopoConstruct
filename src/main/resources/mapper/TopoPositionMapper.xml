@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topology.phytopo.mapper.TopoPositionMapper">
+
+    <resultMap id="PositionResultMap" type="com.topology.phytopo.entity.TopoPosition">
+        <id column="ID" property="id"/>
+        <result column="SUBNET_DN" property="subnetDn"/>
+        <result column="ELEMENT_DN" property="elementDn"/>
+        <result column="ELEMENT_TYPE" property="elementType"/>
+        <result column="POS_X" property="posX"/>
+        <result column="POS_Y" property="posY"/>
+        <result column="WIDTH" property="width"/>
+        <result column="HEIGHT" property="height"/>
+        <result column="CREATED_TIME" property="createdTime"/>
+        <result column="UPDATED_TIME" property="updatedTime"/>
+    </resultMap>
+
+    <select id="selectBySubnetAndElement" resultType="com.topology.phytopo.entity.TopoPosition">
+        SELECT * FROM T_TOPO_POSITION WHERE SUBNET_DN = #{subnetDn} AND ELEMENT_DN = #{elementDn}
+    </select>
+
+    <select id="selectBySubnetDn" resultType="com.topology.phytopo.entity.TopoPosition">
+        SELECT * FROM T_TOPO_POSITION WHERE SUBNET_DN = #{subnetDn}
+    </select>
+
+    <insert id="insert" parameterType="com.topology.phytopo.entity.TopoPosition">
+        INSERT IGNORE INTO T_TOPO_POSITION (
+            SUBNET_DN, ELEMENT_DN, ELEMENT_TYPE, POS_X, POS_Y, WIDTH, HEIGHT, CREATED_TIME, UPDATED_TIME
+        ) VALUES (
+            #{subnetDn}, #{elementDn}, #{elementType}, #{posX}, #{posY}, #{width}, #{height}, #{createdTime}, #{updatedTime}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.topology.phytopo.entity.TopoPosition">
+        UPDATE T_TOPO_POSITION SET
+            POS_X = #{posX},
+            POS_Y = #{posY},
+            WIDTH = #{width},
+            HEIGHT = #{height},
+            UPDATED_TIME = #{updatedTime}
+        WHERE SUBNET_DN = #{subnetDn} AND ELEMENT_DN = #{elementDn}
+    </update>
+
+    <delete id="deleteBySubnetAndElement">
+        DELETE FROM T_TOPO_POSITION WHERE SUBNET_DN = #{subnetDn} AND ELEMENT_DN = #{elementDn}
+    </delete>
+
+    <delete id="deleteBySubnetDn">
+        DELETE FROM T_TOPO_POSITION WHERE SUBNET_DN = #{subnetDn}
+    </delete>
+
+</mapper>

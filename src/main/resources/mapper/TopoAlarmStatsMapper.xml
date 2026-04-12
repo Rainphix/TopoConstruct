@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topology.phytopo.mapper.TopoAlarmStatsMapper">
+
+    <select id="selectByElementDn" resultType="com.topology.phytopo.entity.TopoAlarmStats">
+        SELECT * FROM T_TOPO_ALARM_STATS WHERE ELEMENT_DN = #{elementDn}
+    </select>
+
+    <select id="selectByElementType" resultType="com.topology.phytopo.entity.TopoAlarmStats">
+        SELECT * FROM T_TOPO_ALARM_STATS WHERE ELEMENT_TYPE = #{elementType}
+    </select>
+
+    <insert id="insertOrUpdate" parameterType="com.topology.phytopo.entity.TopoAlarmStats">
+        INSERT INTO T_TOPO_ALARM_STATS (
+            ELEMENT_DN, ELEMENT_TYPE, CRITICAL_COUNT, MAJOR_COUNT, MINOR_COUNT,
+            WARNING_COUNT, CLEARED_COUNT, TOTAL_COUNT, UPDATED_TIME
+        ) VALUES (
+            #{elementDn}, #{elementType}, #{criticalCount}, #{majorCount}, #{minorCount},
+            #{warningCount}, #{clearedCount}, #{totalCount}, #{updatedTime}
+        ) ON DUPLICATE KEY UPDATE
+            CRITICAL_COUNT = #{criticalCount},
+            MAJOR_COUNT = #{majorCount},
+            MINOR_COUNT = #{minorCount},
+            WARNING_COUNT = #{warningCount},
+            CLEARED_COUNT = #{clearedCount},
+            TOTAL_COUNT = #{totalCount},
+            UPDATED_TIME = #{updatedTime}
+    </insert>
+
+    <update id="update" parameterType="com.topology.phytopo.entity.TopoAlarmStats">
+        UPDATE T_TOPO_ALARM_STATS SET
+            CRITICAL_COUNT = #{criticalCount},
+            MAJOR_COUNT = #{majorCount},
+            MINOR_COUNT = #{minorCount},
+            WARNING_COUNT = #{warningCount},
+            CLEARED_COUNT = #{clearedCount},
+            TOTAL_COUNT = #{totalCount},
+            UPDATED_TIME = #{updatedTime}
+        WHERE ELEMENT_DN = #{elementDn}
+    </update>
+
+    <delete id="deleteByElementDn">
+        DELETE FROM T_TOPO_ALARM_STATS WHERE ELEMENT_DN = #{elementDn}
+    </delete>
+
+    <select id="selectByElementDnList" resultType="com.topology.phytopo.entity.TopoAlarmStats">
+        SELECT * FROM T_TOPO_ALARM_STATS WHERE ELEMENT_DN IN
+        <foreach collection="list" item="dn" open="(" separator="," close=")">
+            #{dn}
+        </foreach>
+    </select>
+
+</mapper>

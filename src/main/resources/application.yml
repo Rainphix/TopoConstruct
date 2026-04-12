@@ -1,0 +1,110 @@
+server:
+  port: 8081
+  servlet:
+    context-path: /api/topo
+
+spring:
+  application:
+    name: phytopo
+
+  # 数据源配置 (MySQL)
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:topology}?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      idle-timeout: 30000
+      pool-name: TopoHikariCP
+      max-lifetime: 1800000
+      connection-timeout: 30000
+
+  # Kafka 配置
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVERS:localhost:9092}
+    consumer:
+      group-id: topo-service-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      enable-auto-commit: false
+      max-poll-records: 100
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all
+    listener:
+      ack-mode: manual
+
+  # Jackson JSON 配置
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
+
+# MyBatis 配置
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml
+  type-aliases-package: com.topology.phytopo.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: true
+    lazy-loading-enabled: true
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
+
+# EAM 服务配置
+eam:
+  base-url: ${EAM_URL:http://localhost:8081/api/eam}
+  timeout: 30000
+  default-group: Default
+
+# CIE 服务配置
+cie:
+  base-url: ${CIE_URL:http://localhost:8082/api/cie}
+  timeout: 30000
+  sync-enabled: true
+
+# 拓扑服务配置
+topology:
+  # 合并配置
+  merge:
+    enabled: false
+    threshold: 20
+    mode: THRESHOLD  # THRESHOLD / ALL
+  # 同步配置
+  sync:
+    batch-size: 500
+    retry-times: 3
+    retry-interval: 1000
+  # 初始化配置
+  init:
+    enabled: true
+    async: true
+
+# 日志配置
+logging:
+  level:
+    root: INFO
+    com.topology.phytopo: DEBUG
+    org.apache.kafka: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/phytopo.log
+    max-size: 100MB
+    max-history: 30
+
+# Actuator 监控
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always

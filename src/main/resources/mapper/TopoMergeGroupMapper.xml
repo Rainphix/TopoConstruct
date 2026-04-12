@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topology.phytopo.mapper.TopoMergeGroupMapper">
+
+    <resultMap id="MergeGroupResultMap" type="com.topology.phytopo.entity.TopoMergeGroup">
+        <id column="ID" property="id"/>
+        <result column="SUBNET_DN" property="subnetDn"/>
+        <result column="PARENT_DN" property="parentDn"/>
+        <result column="NE_TYPE" property="neType"/>
+        <result column="GROUP_INDEX" property="groupIndex"/>
+        <result column="MEMBER_COUNT" property="memberCount"/>
+        <result column="CREATED_TIME" property="createdTime"/>
+        <result column="UPDATED_TIME" property="updatedTime"/>
+    </resultMap>
+
+    <select id="selectBySubnetDn" resultType="com.topology.phytopo.entity.TopoMergeGroup">
+        SELECT * FROM T_TOPO_MERGE_GROUP WHERE SUBNET_DN = #{subnetDn}
+    </select>
+
+    <select id="selectByParentAndNeType" resultType="com.topology.phytopo.entity.TopoMergeGroup">
+        SELECT * FROM T_TOPO_MERGE_GROUP WHERE PARENT_DN = #{parentDn} AND NE_TYPE = #{neType}
+    </select>
+
+    <select id="selectAll" resultType="com.topology.phytopo.entity.TopoMergeGroup">
+        SELECT * FROM T_TOPO_MERGE_GROUP ORDER BY PARENT_DN, NE_TYPE, GROUP_INDEX
+    </select>
+
+    <insert id="insert" parameterType="com.topology.phytopo.entity.TopoMergeGroup">
+        INSERT INTO T_TOPO_MERGE_GROUP (
+            SUBNET_DN, PARENT_DN, NE_TYPE, GROUP_INDEX, MEMBER_COUNT, CREATED_TIME, UPDATED_TIME
+        ) VALUES (
+            #{subnetDn}, #{parentDn}, #{neType}, #{groupIndex}, #{memberCount}, #{createdTime}, #{updatedTime}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.topology.phytopo.entity.TopoMergeGroup">
+        UPDATE T_TOPO_MERGE_GROUP SET
+            MEMBER_COUNT = #{memberCount},
+            UPDATED_TIME = #{updatedTime}
+        WHERE SUBNET_DN = #{subnetDn}
+    </update>
+
+    <delete id="deleteBySubnetDn">
+        DELETE FROM T_TOPO_MERGE_GROUP WHERE SUBNET_DN = #{subnetDn}
+    </delete>
+
+</mapper>

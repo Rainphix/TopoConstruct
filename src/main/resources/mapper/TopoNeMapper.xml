@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.topology.phytopo.mapper.TopoNeMapper">
+
+    <resultMap id="NeResultMap" type="com.topology.phytopo.entity.TopoNe">
+        <id column="ID" property="id"/>
+        <result column="DN" property="dn"/>
+        <result column="NAME" property="name"/>
+        <result column="DISPLAY_NAME" property="displayName"/>
+        <result column="NE_TYPE" property="neType"/>
+        <result column="PARENT_DN" property="parentDn"/>
+        <result column="PARENT_TYPE" property="parentType"/>
+        <result column="ROOT_SUBNET_DN" property="rootSubnetDn"/>
+        <result column="MED_NODE" property="medNode"/>
+        <result column="ADDRESS" property="address"/>
+        <result column="LOCATION" property="location"/>
+        <result column="MAINTAINER" property="maintainer"/>
+        <result column="CONTACT" property="contact"/>
+        <result column="STATUS" property="status"/>
+        <result column="ALARM_STATUS" property="alarmStatus"/>
+        <result column="SEQUENCE_NO" property="sequenceNo"/>
+        <result column="CREATED_TIME" property="createdTime"/>
+        <result column="UPDATED_TIME" property="updatedTime"/>
+        <result column="SYNC_TIME" property="syncTime"/>
+        <result column="VERSION" property="version"/>
+    </resultMap>
+
+    <select id="selectByDn" resultType="com.topology.phytopo.entity.TopoNe">
+        SELECT * FROM T_TOPO_NE WHERE DN = #{dn}
+    </select>
+
+    <select id="selectByParentDn" resultType="com.topology.phytopo.entity.TopoNe">
+        SELECT * FROM T_TOPO_NE WHERE PARENT_DN = #{parentDn} ORDER BY NAME
+    </select>
+
+    <select id="selectByNeTypeAndParentDn" resultType="com.topology.phytopo.entity.TopoNe">
+        SELECT * FROM T_TOPO_NE WHERE NE_TYPE = #{neType} AND PARENT_DN = #{parentDn}
+    </select>
+
+    <select id="selectAll" resultType="com.topology.phytopo.entity.TopoNe">
+        SELECT * FROM T_TOPO_NE ORDER BY NE_TYPE, NAME
+    </select>
+
+    <insert id="insert" parameterType="com.topology.phytopo.entity.TopoNe">
+        INSERT INTO T_TOPO_NE (
+            DN, NAME, DISPLAY_NAME, NE_TYPE, PARENT_DN, PARENT_TYPE, ROOT_SUBNET_DN,
+            MED_NODE, ADDRESS, LOCATION, MAINTAINER, CONTACT,
+            STATUS, ALARM_STATUS, SEQUENCE_NO, CREATED_TIME, UPDATED_TIME, SYNC_TIME, VERSION
+        ) VALUES (
+            #{dn}, #{name}, #{displayName}, #{neType}, #{parentDn}, #{parentType}, #{rootSubnetDn},
+            #{medNode}, #{address}, #{location}, #{maintainer}, #{contact},
+            #{status}, #{alarmStatus}, #{sequenceNo}, #{createdTime}, #{updatedTime}, #{syncTime}, #{version}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.topology.phytopo.entity.TopoNe">
+        UPDATE T_TOPO_NE SET
+            NAME = #{name},
+            DISPLAY_NAME = #{displayName},
+            PARENT_DN = #{parentDn},
+            ADDRESS = #{address},
+            LOCATION = #{location},
+            STATUS = #{status},
+            UPDATED_TIME = #{updatedTime}
+        WHERE DN = #{dn}
+    </update>
+
+    <delete id="deleteByDn">
+        DELETE FROM T_TOPO_NE WHERE DN = #{dn}
+    </delete>
+
+    <select id="existsByDn" resultType="boolean">
+        SELECT COUNT(1) > 0 FROM T_TOPO_NE WHERE DN = #{dn}
+    </select>
+
+    <select id="countByNeType" resultType="int">
+        SELECT COUNT(*) FROM T_TOPO_NE WHERE NE_TYPE = #{neType}
+    </select>
+
+    <update id="batchUpdateParentDn">
+        UPDATE T_TOPO_NE SET PARENT_DN = #{newParentDn}, UPDATED_TIME = #{updatedTime}
+        WHERE DN IN
+        <foreach item="dn" collection="dnList" open="(" separator="," close=")">
+            #{dn}
+        </foreach>
+    </update>
+
+    <update id="updateParentDn">
+        UPDATE T_TOPO_NE SET PARENT_DN = #{newParentDn}, ROOT_SUBNET_DN = #{rootSubnetDn}, UPDATED_TIME = #{updatedTime}
+        WHERE DN = #{dn}
+    </update>
+
+</mapper>

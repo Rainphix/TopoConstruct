@@ -1,0 +1,42 @@
+/* Reset & Base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* ReactFlow overrides */
+.react-flow__node {
+  cursor: grab;
+}
+
+.react-flow__node:active {
+  cursor: grabbing;
+}
+
+.react-flow__minimap {
+  border-radius: 4px;
+}
+
+/* Ant Design Layout overrides */
+.ant-layout-sider {
+  overflow: auto;
+}
+
+.ant-tree .ant-tree-node-content-wrapper {
+  display: inline-flex !important;
+  align-items: center;
+}
+
+/* Toolbar */
+.ant-btn-text {
+  font-size: 13px;
+}
