@@ -39,6 +39,38 @@
         WHERE ELEMENT_DN = #{elementDn}
     </update>
 
+    <!-- 增量更新：并发安全，由 MySQL 行锁保证原子性 -->
+    <insert id="incrementAndUpdate" parameterType="com.topology.phytopo.entity.TopoAlarmStats">
+        INSERT INTO T_TOPO_ALARM_STATS (
+            ELEMENT_DN, ELEMENT_TYPE, CRITICAL_COUNT, MAJOR_COUNT, MINOR_COUNT,
+            WARNING_COUNT, CLEARED_COUNT, TOTAL_COUNT, UPDATED_TIME
+        ) VALUES (
+            #{elementDn}, #{elementType}, #{criticalCount}, #{majorCount}, #{minorCount},
+            #{warningCount}, #{clearedCount}, #{totalCount}, #{updatedTime}
+        ) ON DUPLICATE KEY UPDATE
+            CRITICAL_COUNT = CRITICAL_COUNT + #{criticalCount},
+            MAJOR_COUNT = MAJOR_COUNT + #{majorCount},
+            MINOR_COUNT = MINOR_COUNT + #{minorCount},
+            WARNING_COUNT = WARNING_COUNT + #{warningCount},
+            CLEARED_COUNT = CLEARED_COUNT + #{clearedCount},
+            TOTAL_COUNT = TOTAL_COUNT + #{totalCount},
+            UPDATED_TIME = #{updatedTime}
+    </insert>
+
+    <!-- 带乐观锁的全量更新：通过版本号检测并发修改 -->
+    <update id="updateWithVersion" parameterType="com.topology.phytopo.entity.TopoAlarmStats">
+        UPDATE T_TOPO_ALARM_STATS SET
+            CRITICAL_COUNT = #{criticalCount},
+            MAJOR_COUNT = #{majorCount},
+            MINOR_COUNT = #{minorCount},
+            WARNING_COUNT = #{warningCount},
+            CLEARED_COUNT = #{clearedCount},
+            TOTAL_COUNT = #{totalCount},
+            UPDATED_TIME = #{updatedTime},
+            VERSION = VERSION + 1
+        WHERE ELEMENT_DN = #{elementDn} AND VERSION = #{version}
+    </update>
+
     <delete id="deleteByElementDn">
         DELETE FROM T_TOPO_ALARM_STATS WHERE ELEMENT_DN = #{elementDn}
     </delete>

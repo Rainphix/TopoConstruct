@@ -12,7 +12,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:topology}?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: ${DB_USERNAME:root}
-    password: ${DB_PASSWORD:}
+    password: ${DB_PASSWORD:muller9873@mysql}
     hikari:
       minimum-idle: 5
       maximum-pool-size: 20
@@ -63,6 +63,12 @@ eam:
   timeout: 30000
   default-group: Default
 
+# Kafka Topic 配置
+kafka:
+  topic:
+    eam-change: ${KAFKA_TOPIC_EAM_CHANGE:eam-changes}
+    alarm-change: ${KAFKA_TOPIC_ALARM_CHANGE:alarm-changes}
+
 # CIE 服务配置
 cie:
   base-url: ${CIE_URL:http://localhost:8082/api/cie}
@@ -81,6 +87,9 @@ topology:
     batch-size: 500
     retry-times: 3
     retry-interval: 1000
+  # 告警配置
+  alarm:
+    retry-times: 3
   # 初始化配置
   init:
     enabled: true

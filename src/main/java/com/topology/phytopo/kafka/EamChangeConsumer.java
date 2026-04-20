@@ -21,7 +21,7 @@ public class EamChangeConsumer {
 
     private final SyncService syncService;
 
-    @KafkaListener(topics = "${kafka.topic.eam-change:eam-changes}", groupId = "topo-service-group")
+    @KafkaListener(topics = "${kafka.topic.eam-change}", groupId = "topo-service-group")
     public void consume(ConsumerRecord<String, String> record, Acknowledgment ack) {
         try {
             String message = record.value();

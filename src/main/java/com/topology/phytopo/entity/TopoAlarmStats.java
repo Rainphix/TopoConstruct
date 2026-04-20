@@ -42,4 +42,7 @@ public class TopoAlarmStats implements Serializable {
 
     /** 更新时间戳 */
     private Long updatedTime;
+
+    /** 乐观锁版本号 */
+    private Integer version;
 }
